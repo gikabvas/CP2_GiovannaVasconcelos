@@ -5,22 +5,15 @@ public class Musica {
     int duracaoSegundos;
     String genero;
 
-    public Musica(String titulo, String artista, int duracaoSegundos, String genero) {
-        this.titulo = titulo;
-        this.artista = artista;
-        this.duracaoSegundos = duracaoSegundos;
-        this.genero = genero;
-    }
-
     public void exibir() {
         System.out.printf("Título: %s | Artista: %s | Duração: %s | Gênero: %s%n",
                 titulo, artista, getDuracaoFormatada(), genero);
     }
 
     public String getDuracaoFormatada() {
-        int minutos = duracaoSegundos / 60;
-        int segs = duracaoSegundos % 60;
-        return String.format("%d:%02d", minutos, segs);
+        int min = duracaoSegundos / 60;
+        int seg = duracaoSegundos % 60;
+        return String.format("%d:%02d", min, seg);
     }
 
     public boolean contemTitulo(String busca) {
