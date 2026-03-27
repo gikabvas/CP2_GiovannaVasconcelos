@@ -1,13 +1,33 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+public class Musica {
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+    String titulo;
+    String artista;
+    int duracaoSegundos;
+    String genero;
+
+    public Musica(String titulo, String artista, int duracaoSegundos, String genero) {
+        this.titulo = titulo;
+        this.artista = artista;
+        this.duracaoSegundos = duracaoSegundos;
+        this.genero = genero;
+    }
+
+    public void exibir() {
+        System.out.printf("Título: %s | Artista: %s | Duração: %s | Gênero: %s%n",
+                titulo, artista, getDuracaoFormatada(), genero);
+    }
+
+    public String getDuracaoFormatada() {
+        int minutos = duracaoSegundos / 60;
+        int segs = duracaoSegundos % 60;
+        return String.format("%d:%02d", minutos, segs);
+    }
+
+    public boolean contemTitulo(String busca) {
+        return titulo.toLowerCase().contains(busca.toLowerCase());
+    }
+
+    public boolean contemArtista(String busca) {
+        return artista.toLowerCase().contains(busca.toLowerCase());
     }
 }
