@@ -2,26 +2,29 @@ import java.util.ArrayList;
 
 class Usuario {
 
-    private String nome;
-    private ArrayList<Playlist> playlists;
+    protected String nome;
+    protected String email;
+    protected ArrayList<Playlist> playlists;
+    protected ArrayList<Musica> historicoReproducao;
 
-    // Construtor padrão — chama o parametrizado com valor default
-    public Usuario() {
-        this("Usuário");
-    }
-
-    // Construtor parametrizado — valida o nome e inicializa a lista
-    public Usuario(String nome) {
+    // Construtor parametrizado
+    public Usuario(String nome, String email) {
         setNome(nome);
+        setEmail(email);
         this.playlists = new ArrayList<>();
+        this.historicoReproducao = new ArrayList<>();
     }
 
-    // Getter
+    // Getters
     public String getNome() {
         return nome;
     }
 
-    // Setter com validação
+    public String getEmail() {
+        return email;
+    }
+
+    // Setters com validação
     public void setNome(String nome) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome do usuário não pode ser nulo ou vazio.");
@@ -29,10 +32,36 @@ class Usuario {
         this.nome = nome.trim();
     }
 
-    // Métodos
+    public void setEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email não pode ser nulo ou vazio.");
+        }
+        this.email = email.trim();
+    }
+
+    // Reproduz uma música e adiciona ao histórico
+    public void reproduzirMusica(Musica musica) {
+        System.out.println("🎵 Reproduzindo: " + musica.getTitulo());
+        historicoReproducao.add(musica);
+    }
+
+    // Exibe todo o histórico de reprodução
+    public void exibirHistorico() {
+        System.out.println("\n--- HISTÓRICO DE REPRODUÇÃO ---");
+        if (historicoReproducao.isEmpty()) {
+            System.out.println("Nenhuma música reproduzida ainda.");
+            return;
+        }
+        for (Musica m : historicoReproducao) {
+            m.exibir();
+        }
+    }
+
+    // Cria e adiciona uma playlist (pode ser sobrescrito nas subclasses)
     public void criarPlaylist(String nome) {
         Playlist p = new Playlist(nome);
-        adicionarPlaylist(p);
+        playlists.add(p);
+        System.out.println("✅ Playlist \"" + nome + "\" criada!");
     }
 
     public void adicionarPlaylist(Playlist playlist) {
@@ -55,7 +84,6 @@ class Usuario {
             System.out.println("Nenhuma playlist criada.");
             return;
         }
-
         for (int i = 0; i < playlists.size(); i++) {
             System.out.println((i + 1) + ". " + playlists.get(i).getNome());
         }
