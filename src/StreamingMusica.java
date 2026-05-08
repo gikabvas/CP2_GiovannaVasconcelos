@@ -4,15 +4,12 @@ import java.util.Scanner;
 public class StreamingMusica {
 
     static ArrayList<Musica> musicas = new ArrayList<>();
-    static Usuario usuario = new Usuario();
-
-    static final String[] GENEROS_VALIDOS = {"Pop", "Rock", "Jazz", "Eletrônica", "Hip-Hop", "Clássica"};
+    static Usuario usuario = new Usuario("Victor");
 
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
 
-        usuario.nome = "Niccolas";
         adicionarMusicasTeste();
 
         int opcao;
@@ -63,33 +60,38 @@ public class StreamingMusica {
 
     // MÚSICA
     public static void cadastrarMusica() {
-        Musica m = new Musica();
+        try {
+            System.out.print("Título: ");
+            String titulo = scanner.nextLine();
 
-        System.out.print("Título: ");
-        m.titulo = scanner.nextLine();
+            System.out.print("Artista: ");
+            String artista = scanner.nextLine();
 
-        System.out.print("Artista: ");
-        m.artista = scanner.nextLine();
+            System.out.print("Duração (em segundos, entre 1 e 3599): ");
+            int duracao = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Duração: ");
-        m.duracaoSegundos = Integer.parseInt(scanner.nextLine());
+            String[] generos = Musica.getGenerosValidos();
+            System.out.println("Escolha gênero:");
+            for (int i = 0; i < generos.length; i++) {
+                System.out.println((i + 1) + ". " + generos[i]);
+            }
 
-        System.out.println("Escolha gênero:");
-        for (int i = 0; i < GENEROS_VALIDOS.length; i++) {
-            System.out.println((i + 1) + ". " + GENEROS_VALIDOS[i]);
+            int g = Integer.parseInt(scanner.nextLine());
+
+            if (g < 1 || g > generos.length) {
+                System.out.println("Gênero inválido.");
+                return;
+            }
+
+            String genero = generos[g - 1];
+
+            Musica m = new Musica(titulo, artista, duracao, genero);
+            musicas.add(m);
+            System.out.println("Música cadastrada!");
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao cadastrar música: " + e.getMessage());
         }
-
-        int g = Integer.parseInt(scanner.nextLine());
-
-        if (g < 1 || g > GENEROS_VALIDOS.length) {
-            System.out.println("Gênero inválido.");
-            return;
-        }
-
-        m.genero = GENEROS_VALIDOS[g - 1];
-
-        musicas.add(m);
-        System.out.println("Música cadastrada!");
     }
 
     public static void listarMusicas() {
@@ -124,11 +126,14 @@ public class StreamingMusica {
 
     // PLAYLIST
     public static void criarPlaylist() {
-        System.out.print("Nome: ");
-        String nome = scanner.nextLine();
-
-        usuario.criarPlaylist(nome);
-        System.out.println("Playlist criada!");
+        try {
+            System.out.print("Nome: ");
+            String nome = scanner.nextLine();
+            usuario.criarPlaylist(nome);
+            System.out.println("Playlist criada!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao criar playlist: " + e.getMessage());
+        }
     }
 
     public static void gerenciarPlaylists() {
@@ -168,6 +173,8 @@ public class StreamingMusica {
         if (m >= 0 && m < musicas.size()) {
             pl.adicionarMusica(musicas.get(m));
             System.out.println("Adicionada!");
+        } else {
+            System.out.println("Música inválida.");
         }
     }
 
@@ -202,23 +209,15 @@ public class StreamingMusica {
 
     // ESTATÍSTICAS
     public static void exibirEstatisticas() {
+        System.out.println("Usuário: " + usuario.getNome());
         System.out.println("Total músicas: " + musicas.size());
         System.out.println("Total playlists: " + usuario.getTotalPlaylists());
     }
 
     // TESTE
     public static void adicionarMusicasTeste() {
-        Musica m1 = new Musica();
-        m1.titulo = "Bohemian Rhapsody";
-        m1.artista = "Queen";
-        m1.duracaoSegundos = 354;
-        m1.genero = "Rock";
-
-        Musica m2 = new Musica();
-        m2.titulo = "Billie Jean";
-        m2.artista = "Michael Jackson";
-        m2.duracaoSegundos = 293;
-        m2.genero = "Pop";
+        Musica m1 = new Musica("Bohemian Rhapsody", "Queen", 354, "Rock");
+        Musica m2 = new Musica("Billie Jean", "Michael Jackson", 293, "Pop");
 
         musicas.add(m1);
         musicas.add(m2);
