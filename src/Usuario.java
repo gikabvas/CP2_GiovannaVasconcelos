@@ -24,36 +24,50 @@ class Usuario {
         return email;
     }
 
-    // Setters com validação
-    public void setNome(String nome) {
+    // Retorna cópia defensiva das playlists (acessível via polimorfismo + instanceof)
+    public ArrayList<Playlist> getPlaylists() {
+        return new ArrayList<>(playlists);
+    }
+
+    // Retorna cópia defensiva do histórico
+    public ArrayList<Musica> getHistoricoReproducao() {
+        return new ArrayList<>(historicoReproducao);
+    }
+
+    // Setters com validação — marcados como final para não serem sobrescritos
+    public final void setNome(String nome) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome do usuário não pode ser nulo ou vazio.");
         }
         this.nome = nome.trim();
     }
 
-    public void setEmail(String email) {
+    public final void setEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email não pode ser nulo ou vazio.");
+        }
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Email inválido: deve conter '@'.");
         }
         this.email = email.trim();
     }
 
-    // Reproduz uma música e adiciona ao histórico
+    // Reproduz uma música e adiciona ao histórico (pode ser sobrescrito nas subclasses)
     public void reproduzirMusica(Musica musica) {
         System.out.println("🎵 Reproduzindo: " + musica.getTitulo());
         historicoReproducao.add(musica);
     }
 
-    // Exibe todo o histórico de reprodução
-    public void exibirHistorico() {
+    // Exibe todo o histórico de reprodução — final, comportamento igual para todos
+    public final void exibirHistorico() {
         System.out.println("\n--- HISTÓRICO DE REPRODUÇÃO ---");
         if (historicoReproducao.isEmpty()) {
             System.out.println("Nenhuma música reproduzida ainda.");
             return;
         }
-        for (Musica m : historicoReproducao) {
-            m.exibir();
+        for (int i = 0; i < historicoReproducao.size(); i++) {
+            System.out.print((i + 1) + ". ");
+            historicoReproducao.get(i).exibir();
         }
     }
 
@@ -64,14 +78,14 @@ class Usuario {
         System.out.println("✅ Playlist \"" + nome + "\" criada!");
     }
 
-    public void adicionarPlaylist(Playlist playlist) {
+    public final void adicionarPlaylist(Playlist playlist) {
         if (playlist == null) {
             throw new IllegalArgumentException("Não é possível adicionar uma playlist nula.");
         }
         playlists.add(playlist);
     }
 
-    public Playlist getPlaylist(int indice) {
+    public final Playlist getPlaylist(int indice) {
         if (indice < 0 || indice >= playlists.size()) {
             System.out.println("Índice de playlist inválido.");
             return null;
@@ -79,17 +93,25 @@ class Usuario {
         return playlists.get(indice);
     }
 
-    public void listarPlaylists() {
+    public final void listarPlaylists() {
         if (playlists.isEmpty()) {
             System.out.println("Nenhuma playlist criada.");
             return;
         }
         for (int i = 0; i < playlists.size(); i++) {
-            System.out.println((i + 1) + ". " + playlists.get(i).getNome());
+            Playlist p = playlists.get(i);
+            String tipo = (p instanceof PlaylistAutomatica) ? " [Automática]" : "";
+            System.out.println((i + 1) + ". " + p.getNome() + tipo
+                    + " (" + p.getQuantidadeMusicas() + " músicas)");
         }
     }
 
-    public int getTotalPlaylists() {
+    public final int getTotalPlaylists() {
         return playlists.size();
+    }
+
+    // Retorna o total de reproduções do usuário
+    public final int getTotalReproducoes() {
+        return historicoReproducao.size();
     }
 }

@@ -41,4 +41,9 @@ class UsuarioFree extends Usuario {
     public int getContadorReproducoes() {
         return contadorReproducoes;
     }
+
+    // Retorna quantas playlists ainda podem ser criadas
+    public int getPlaylitsDisponiveis() {
+        return MAX_PLAYLISTS - playlists.size();
+    }
 }

@@ -23,6 +23,11 @@ class UsuarioPremium extends Usuario {
         this.plano = plano.trim();
     }
 
+    // Retorna cópia defensiva das músicas baixadas (usada com instanceof + casting)
+    public ArrayList<Musica> getMusicasBaixadas() {
+        return new ArrayList<>(musicasBaixadas);
+    }
+
     // Sobrescrita: reproduz em alta qualidade (sem anúncios, sem limite)
     @Override
     public void reproduzirMusica(Musica musica) {
