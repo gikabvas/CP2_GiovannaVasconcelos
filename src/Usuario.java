@@ -1,22 +1,53 @@
 import java.util.ArrayList;
 
-public class Usuario {
+class Usuario {
 
-    String nome;
-    ArrayList<Playlist> playlists = new ArrayList<>();
+    private String nome;
+    private ArrayList<Playlist> playlists;
 
+    // Construtor padrão — chama o parametrizado com valor default
+    public Usuario() {
+        this("Usuário");
+    }
+
+    // Construtor parametrizado — valida o nome e inicializa a lista
+    public Usuario(String nome) {
+        setNome(nome);
+        this.playlists = new ArrayList<>();
+    }
+
+    // Getter
+    public String getNome() {
+        return nome;
+    }
+
+    // Setter com validação
+    public void setNome(String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Nome do usuário não pode ser nulo ou vazio.");
+        }
+        this.nome = nome.trim();
+    }
+
+    // Métodos
     public void criarPlaylist(String nome) {
-        Playlist p = new Playlist();
-        p.nome = nome;
-        playlists.add(p);
+        Playlist p = new Playlist(nome);
+        adicionarPlaylist(p);
+    }
+
+    public void adicionarPlaylist(Playlist playlist) {
+        if (playlist == null) {
+            throw new IllegalArgumentException("Não é possível adicionar uma playlist nula.");
+        }
+        playlists.add(playlist);
     }
 
     public Playlist getPlaylist(int indice) {
-        if (indice >= 0 && indice < playlists.size()) {
-            return playlists.get(indice);
+        if (indice < 0 || indice >= playlists.size()) {
+            System.out.println("Índice de playlist inválido.");
+            return null;
         }
-        System.out.println("Playlist inválida.");
-        return null;
+        return playlists.get(indice);
     }
 
     public void listarPlaylists() {
@@ -26,7 +57,7 @@ public class Usuario {
         }
 
         for (int i = 0; i < playlists.size(); i++) {
-            System.out.println((i + 1) + ". " + playlists.get(i).nome);
+            System.out.println((i + 1) + ". " + playlists.get(i).getNome());
         }
     }
 
