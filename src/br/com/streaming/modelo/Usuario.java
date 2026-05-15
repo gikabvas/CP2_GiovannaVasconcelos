@@ -1,64 +1,57 @@
+package br.com.streaming.modelo;
+
+import br.com.streaming.util.Validador;
+
 import java.util.ArrayList;
 
-class Usuario {
+// classe base dos usuarios — UsuarioFree e UsuarioPremium herdam daqui
+// coloquei aqui tudo que é igual pros dois: historico, playlists, nome, email
+public class Usuario {
 
-    protected String nome;
-    protected String email;
+    protected String              nome;
+    protected String              email;
     protected ArrayList<Playlist> playlists;
-    protected ArrayList<Musica> historicoReproducao;
+    protected ArrayList<Musica>   historicoReproducao;
 
-    // Construtor parametrizado
     public Usuario(String nome, String email) {
         setNome(nome);
         setEmail(email);
-        this.playlists = new ArrayList<>();
+        this.playlists           = new ArrayList<>();
         this.historicoReproducao = new ArrayList<>();
     }
 
-    // Getters
-    public String getNome() {
-        return nome;
-    }
+    public String getNome()  { return nome; }
+    public String getEmail() { return email; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    // Retorna cópia defensiva das playlists (acessível via polimorfismo + instanceof)
     public ArrayList<Playlist> getPlaylists() {
         return new ArrayList<>(playlists);
     }
 
-    // Retorna cópia defensiva do histórico
     public ArrayList<Musica> getHistoricoReproducao() {
         return new ArrayList<>(historicoReproducao);
     }
 
-    // Setters com validação — marcados como final para não serem sobrescritos
+    // final nos setters de nome e email — essa validacao nao pode ser alterada nas subclasses
     public final void setNome(String nome) {
-        if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("Nome do usuário não pode ser nulo ou vazio.");
-        }
+        Validador.exigirTexto(nome, "Nome do usuário");
         this.nome = nome.trim();
     }
 
     public final void setEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email não pode ser nulo ou vazio.");
-        }
-        if (!email.contains("@")) {
-            throw new IllegalArgumentException("Email inválido: deve conter '@'.");
+        if (!Validador.emailValido(email)) {
+            throw new IllegalArgumentException("Email inválido: precisa conter '@'.");
         }
         this.email = email.trim();
     }
 
-    // Reproduz uma música e adiciona ao histórico (pode ser sobrescrito nas subclasses)
+    // esse metodo é sobrescrito em UsuarioFree (anuncio) e UsuarioPremium (alta qualidade)
     public void reproduzirMusica(Musica musica) {
-        System.out.println("🎵 Reproduzindo: " + musica.getTitulo());
+        Validador.exigirNaoNulo(musica, "Música");
+        musica.reproduzir();
         historicoReproducao.add(musica);
     }
 
-    // Exibe todo o histórico de reprodução — final, comportamento igual para todos
+    // historico é igual pra todos os tipos de usuario, nao precisa sobrescrever
     public final void exibirHistorico() {
         System.out.println("\n--- HISTÓRICO DE REPRODUÇÃO ---");
         if (historicoReproducao.isEmpty()) {
@@ -71,7 +64,7 @@ class Usuario {
         }
     }
 
-    // Cria e adiciona uma playlist (pode ser sobrescrito nas subclasses)
+    // UsuarioFree sobrescreve esse metodo pra checar o limite de 3 playlists
     public void criarPlaylist(String nome) {
         Playlist p = new Playlist(nome);
         playlists.add(p);
@@ -79,9 +72,7 @@ class Usuario {
     }
 
     public final void adicionarPlaylist(Playlist playlist) {
-        if (playlist == null) {
-            throw new IllegalArgumentException("Não é possível adicionar uma playlist nula.");
-        }
+        Validador.exigirNaoNulo(playlist, "Playlist");
         playlists.add(playlist);
     }
 
@@ -100,18 +91,11 @@ class Usuario {
         }
         for (int i = 0; i < playlists.size(); i++) {
             Playlist p = playlists.get(i);
-            String tipo = (p instanceof PlaylistAutomatica) ? " [Automática]" : "";
-            System.out.println((i + 1) + ". " + p.getNome() + tipo
-                    + " (" + p.getQuantidadeMusicas() + " músicas)");
+            System.out.printf("  %d. %-25s (%d músicas | %s)%n",
+                    (i + 1), p.getNome(), p.getQuantidadeMusicas(), p.getDuracaoFormatada());
         }
     }
 
-    public final int getTotalPlaylists() {
-        return playlists.size();
-    }
-
-    // Retorna o total de reproduções do usuário
-    public final int getTotalReproducoes() {
-        return historicoReproducao.size();
-    }
+    public final int getTotalPlaylists()   { return playlists.size(); }
+    public final int getTotalReproducoes() { return historicoReproducao.size(); }
 }

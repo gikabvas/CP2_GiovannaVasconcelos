@@ -1,26 +1,31 @@
-class UsuarioFree extends Usuario {
+package br.com.streaming.modelo;
 
+// usuario do plano gratuito
+// tem limite de 3 playlists e leva anuncio a cada 3 musicas reproduzidas
+public class UsuarioFree extends Usuario {
+
+    // limite fixo de playlists pra conta free
     private static final int MAX_PLAYLISTS = 3;
+
     private int contadorReproducoes;
 
     public UsuarioFree(String nome, String email) {
-        super(nome, email); // chama o construtor da superclasse
+        super(nome, email);
         this.contadorReproducoes = 0;
     }
 
-    // Sobrescrita: incrementa contador e exibe anúncio a cada 3 músicas
+    // sobrescrevo aqui pra inserir o anuncio a cada 3 reproducoes
+    // depois chamo o super pra nao perder a logica de historico
     @Override
     public void reproduzirMusica(Musica musica) {
         contadorReproducoes++;
-
         if (contadorReproducoes % 3 == 0) {
             exibirAnuncio();
         }
-
-        super.reproduzirMusica(musica); // chama o método da superclasse
+        super.reproduzirMusica(musica);
     }
 
-    // Sobrescrita: cria playlist respeitando o limite de 3
+    // sobrescrevo pra checar o limite antes de criar
     @Override
     public void criarPlaylist(String nome) {
         if (playlists.size() >= MAX_PLAYLISTS) {
@@ -31,19 +36,15 @@ class UsuarioFree extends Usuario {
         super.criarPlaylist(nome);
     }
 
-    // Exibe anúncio entre músicas
     private void exibirAnuncio() {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("📢 ANÚNCIO: Assine Premium e ouça sem interrupções!");
         System.out.println("=".repeat(50) + "\n");
     }
 
-    public int getContadorReproducoes() {
-        return contadorReproducoes;
-    }
+    public int getContadorReproducoes()  { return contadorReproducoes; }
+    public int getPlaylistsDisponiveis() { return MAX_PLAYLISTS - playlists.size(); }
 
-    // Retorna quantas playlists ainda podem ser criadas
-    public int getPlaylitsDisponiveis() {
-        return MAX_PLAYLISTS - playlists.size();
-    }
+    // quantidade de anuncios que o usuario ja viu
+    public int getAnunciosExibidos()     { return contadorReproducoes / 3; }
 }
